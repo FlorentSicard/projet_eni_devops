@@ -31,6 +31,13 @@ jobs:
       with:
         node-version: ${{ env.NODE_VERSION }}
 
+    - name: Configure npm for better reliability
+      run: |
+        npm config set fetch-retry-mintimeout 20000
+        npm config set fetch-retry-maxtimeout 120000
+        npm config set fetch-retries 5
+        npm config set maxsockets 5
+
     - name: Cache backend dependencies
       uses: actions/cache@v3
       with:
@@ -41,7 +48,11 @@ jobs:
 
     - name: Install backend dependencies
       working-directory: ./backend
-      run: npm ci
+      run: |
+        npm ci --retry=3 --retry-delay=1000 --maxsockets=5
+      env:
+        NPM_CONFIG_PROGRESS: false
+        NPM_CONFIG_AUDIT: false
 
     - name: Run backend unit tests
       working-directory: ./backend
@@ -74,6 +85,13 @@ jobs:
       with:
         node-version: ${{ env.NODE_VERSION }}
 
+    - name: Configure npm for better reliability
+      run: |
+        npm config set fetch-retry-mintimeout 20000
+        npm config set fetch-retry-maxtimeout 120000
+        npm config set fetch-retries 5
+        npm config set maxsockets 5
+
     - name: Cache frontend dependencies
       uses: actions/cache@v3
       with:
@@ -84,7 +102,11 @@ jobs:
 
     - name: Install frontend dependencies
       working-directory: ./frontend
-      run: npm ci
+      run: |
+        npm ci --retry=3 --retry-delay=1000 --maxsockets=5
+      env:
+        NPM_CONFIG_PROGRESS: false
+        NPM_CONFIG_AUDIT: false
 
     - name: Run frontend unit tests
       working-directory: ./frontend
