@@ -10,8 +10,6 @@ env:
   # Registry configuration
   REGISTRY: docker.io
   REGISTRY_NAMESPACE: sicardflorent/projet-eni
-  BACKEND_IMAGE_NAME: backend
-  FRONTEND_IMAGE_NAME: frontend
   
   # Node.js version for tests
   NODE_VERSION: '18'
@@ -21,6 +19,7 @@ jobs:
   test-backend:
     name: Test Backend
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     
     steps:
     - name: Checkout code
@@ -33,10 +32,11 @@ jobs:
 
     - name: Configure npm for better reliability
       run: |
-        npm config set fetch-retry-mintimeout 20000
-        npm config set fetch-retry-maxtimeout 120000
-        npm config set fetch-retries 5
-        npm config set maxsockets 5
+        npm config set fetch-retry-mintimeout 10000
+        npm config set fetch-retry-maxtimeout 60000
+        npm config set fetch-retries 3
+        npm config set maxsockets 10
+        npm config set registry https://registry.npmjs.org/
 
     - name: Cache backend dependencies
       uses: actions/cache@v3
@@ -48,11 +48,11 @@ jobs:
 
     - name: Install backend dependencies
       working-directory: ./backend
+      timeout-minutes: 8
       run: |
-        npm ci --retry=3 --retry-delay=1000 --maxsockets=5
+        npm ci --prefer-offline --no-audit --no-fund --maxsockets=10
       env:
         NPM_CONFIG_PROGRESS: false
-        NPM_CONFIG_AUDIT: false
 
     - name: Run backend unit tests
       working-directory: ./backend
@@ -75,6 +75,7 @@ jobs:
   test-frontend:
     name: Test Frontend
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     
     steps:
     - name: Checkout code
@@ -87,10 +88,11 @@ jobs:
 
     - name: Configure npm for better reliability
       run: |
-        npm config set fetch-retry-mintimeout 20000
-        npm config set fetch-retry-maxtimeout 120000
-        npm config set fetch-retries 5
-        npm config set maxsockets 5
+        npm config set fetch-retry-mintimeout 10000
+        npm config set fetch-retry-maxtimeout 60000
+        npm config set fetch-retries 3
+        npm config set maxsockets 10
+        npm config set registry https://registry.npmjs.org/
 
     - name: Cache frontend dependencies
       uses: actions/cache@v3
@@ -102,11 +104,11 @@ jobs:
 
     - name: Install frontend dependencies
       working-directory: ./frontend
+      timeout-minutes: 10
       run: |
-        npm ci --retry=3 --retry-delay=1000 --maxsockets=5
+        npm ci --prefer-offline --no-audit --no-fund --maxsockets=10
       env:
         NPM_CONFIG_PROGRESS: false
-        NPM_CONFIG_AUDIT: false
 
     - name: Run frontend unit tests
       working-directory: ./frontend
@@ -134,9 +136,9 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.REGISTRY_NAMESPACE }}/${{ env.BACKEND_IMAGE_NAME }}
+        images: ${{ env.REGISTRY_NAMESPACE }}
         tags: |
-          type=sha
+          type=raw,value=backend-{{sha}}
 
     - name: Build and push backend Docker image
       uses: docker/build-push-action@v5
@@ -168,9 +170,9 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.REGISTRY_NAMESPACE }}/${{ env.FRONTEND_IMAGE_NAME }}
+        images: ${{ env.REGISTRY_NAMESPACE }}
         tags: |
-          type=sha
+          type=raw,value=frontend-{{sha}}
 
     - name: Build and push frontend Docker image
       uses: docker/build-push-action@v5
