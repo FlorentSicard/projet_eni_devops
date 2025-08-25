@@ -1,26 +1,36 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TaskFormComponent } from './task-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { TaskService } from '../../services/task.service';
-import { of } from 'rxjs';
 import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
+import { TaskFormComponent } from './task-form.component';
+import { TaskService } from '../../services/task.service';
 
 describe('TaskFormComponent', () => {
   let component: TaskFormComponent;
   let fixture: ComponentFixture<TaskFormComponent>;
   let mockTaskService: jasmine.SpyObj<TaskService>;
   let mockRouter: jasmine.SpyObj<Router>;
+  let mockActivatedRoute: any;
 
   beforeEach(() => {
     mockTaskService = jasmine.createSpyObj<TaskService>('TaskService', ['createTask']);
     mockRouter = jasmine.createSpyObj<Router>('Router', ['navigate']);
+    mockActivatedRoute = {
+      snapshot: {
+        paramMap: {
+          get: jasmine.createSpy('get').and.returnValue(null)
+        }
+      }
+    };
 
     TestBed.configureTestingModule({
       imports: [ReactiveFormsModule],
       declarations: [TaskFormComponent],
       providers: [
         { provide: TaskService, useValue: mockTaskService },
-        { provide: Router, useValue: mockRouter }
+        { provide: Router, useValue: mockRouter },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute }
       ]
     }).compileComponents();
 
@@ -52,6 +62,6 @@ describe('TaskFormComponent', () => {
     component.onSubmit();
 
     expect(mockTaskService.createTask).toHaveBeenCalled();
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/tasks']);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/']);
   });
 });

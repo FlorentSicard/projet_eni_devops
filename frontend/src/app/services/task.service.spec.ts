@@ -75,7 +75,7 @@ describe('TaskService', () => {
 
   it('should delete a task', () => {
     service.deleteTask(1).subscribe(response => {
-      expect(response).toBeUndefined(); // car void
+      expect(response).toBeNull(); // The service returns null from the flush
     });
 
     const req = httpMock.expectOne('http://localhost:3000/api/tasks/1');
