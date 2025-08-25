@@ -1,0 +1,210 @@
+name: CI/CD Pipeline - ToDoList Application
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  # Registry configuration
+  REGISTRY: docker.io
+  BACKEND_IMAGE_NAME: todolist-backend
+  FRONTEND_IMAGE_NAME: todolist-frontend
+  
+  # Node.js version for tests
+  NODE_VERSION: '18'
+
+jobs:
+  # Job 1: Run tests for backend
+  test-backend:
+    name: Test Backend
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: projet_devops_backend/package-lock.json
+
+    - name: Install backend dependencies
+      working-directory: ./projet_devops_backend
+      run: npm ci
+
+    - name: Run backend unit tests
+      working-directory: ./projet_devops_backend
+      run: npm test
+
+    - name: Generate test coverage report
+      working-directory: ./projet_devops_backend
+      run: npm test -- --coverage --watchAll=false
+
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./projet_devops_backend/coverage/lcov.info
+        flags: backend
+        name: backend-coverage
+
+  # Job 2: Run tests for frontend
+  test-frontend:
+    name: Test Frontend
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: projet_devops_frontend/package-lock.json
+
+    - name: Install frontend dependencies
+      working-directory: ./projet_devops_frontend
+      run: npm ci
+
+    - name: Run frontend unit tests
+      working-directory: ./projet_devops_frontend
+      run: npm test -- --watch=false --browsers=ChromeHeadless
+
+    - name: Build frontend for production
+      working-directory: ./projet_devops_frontend
+      run: npm run build
+
+  # Job 3: Build and push backend Docker image
+  build-push-backend:
+    name: Build & Push Backend
+    runs-on: ubuntu-latest
+    needs: test-backend
+    if: github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ env.BACKEND_IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+
+    - name: Build and push backend Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./projet_devops_backend
+        file: ./projet_devops_backend/Dockerfile
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        platforms: linux/amd64,linux/arm64
+
+  # Job 4: Build and push frontend Docker image
+  build-push-frontend:
+    name: Build & Push Frontend
+    runs-on: ubuntu-latest
+    needs: test-frontend
+    if: github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ env.FRONTEND_IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+
+    - name: Build and push frontend Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./projet_devops_frontend
+        file: ./projet_devops_frontend/Dockerfile
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        platforms: linux/amd64,linux/arm64
+
+  # Job 5: Security scan
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: [build-push-backend, build-push-frontend]
+    if: github.event_name == 'push'
+    
+    steps:
+    - name: Run Trivy vulnerability scanner - Backend
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ env.BACKEND_IMAGE_NAME }}:latest
+        format: 'sarif'
+        output: 'backend-trivy-results.sarif'
+
+    - name: Run Trivy vulnerability scanner - Frontend
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ env.FRONTEND_IMAGE_NAME }}:latest
+        format: 'sarif'
+        output: 'frontend-trivy-results.sarif'
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: '.'
+
+  # Job 6: Deploy notification
+  deploy-notification:
+    name: Deployment Notification
+    runs-on: ubuntu-latest
+    needs: [build-push-backend, build-push-frontend]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Deployment Success Notification
+      run: |
+        echo "🚀 Deployment completed successfully!"
+        echo "Backend image: ${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ env.BACKEND_IMAGE_NAME }}:latest"
+        echo "Frontend image: ${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ env.FRONTEND_IMAGE_NAME }}:latest"
+        echo "Images are ready for deployment to AKS cluster"
