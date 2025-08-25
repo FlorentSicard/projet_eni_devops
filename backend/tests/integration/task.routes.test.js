@@ -1,6 +1,9 @@
 const request = require('supertest');
 const app = require('../../src/app');
-const db = require('../../src/models');
+const db = require('../setup/testDb');
+
+// Mock du module models pour utiliser la base de test
+jest.mock('../../src/models', () => require('../setup/testDb'));
 
 beforeAll(async () => {
   await db.sequelize.sync({ force: true });

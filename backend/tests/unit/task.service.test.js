@@ -1,7 +1,10 @@
-const db = require('../../src/models');
+const db = require('../setup/testDb');
 const taskService = require('../../src/services/task.service');
 
-// Mock de la base de données avec Sequelize en mémoire
+// Mock du module models pour utiliser la base de test
+jest.mock('../../src/models', () => require('../setup/testDb'));
+
+// Configuration de la base de données de test avec SQLite en mémoire
 beforeAll(async () => {
   await db.sequelize.sync({ force: true });
 });
