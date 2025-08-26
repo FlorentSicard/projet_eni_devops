@@ -7,7 +7,17 @@ metadata:
   namespace: projet-eni
 type: kubernetes.io/dockerconfigjson
 data:
-  .dockerconfigjson: eyJhdXRocyI6eyJodHRwczovL2luZGV4LmRvY2tlci5pby92MS8iOnsidXNlcm5hbWUiOiJzaWNhcmRmbG9yZW50IiwicGFzc3dvcmQiOiJkY2tyX3BhdF9fYUV0aldHeDdMbFFVQjRjY2V6emJFdmZmVVEiLCJhdXRoIjoiYzJsallYSmtabXh2Y21WdWREcGtZMnR5WDNCaGRGOWZZVVYwYWxkSGVEZE1iRkZWUWpSalkyVjZlbUpGZG1abVZWRT0ifX19
+  # Generate the base64 encoded docker config with:
+  # kubectl create secret docker-registry docker-registry-secret \
+  #   --docker-server=https://index.docker.io/v1/ \
+  #   --docker-username=YOUR_USERNAME \
+  #   --docker-password=YOUR_TOKEN \
+  #   --docker-email=YOUR_EMAIL \
+  #   --dry-run=client -o yaml
+  # 
+  # Or get from existing secret:
+  # kubectl get secret docker-registry-secret -n projet-eni -o jsonpath='{.data.\.dockerconfigjson}'
+  .dockerconfigjson: REPLACE_WITH_YOUR_BASE64_ENCODED_DOCKER_CONFIG
 
 ---
 # Service Account for GitHub Actions
