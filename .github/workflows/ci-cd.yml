@@ -23,7 +23,7 @@ jobs:
           frontend/package-lock.json
     
     # Backend tests
-    - name: Install backend deps
+    - name: Install backend
       run: npm install
       working-directory: ./backend
       
@@ -32,12 +32,12 @@ jobs:
       working-directory: ./backend
     
     # Frontend tests  
-    - name: Install frontend deps
+    - name: Install frontend
       run: npm install
       working-directory: ./frontend
       
     - name: Test frontend
-      run: npm run test -- --watch=false --browsers=ChromeHeadless
+      run: npm run test
       working-directory: ./frontend
 
   build-and-push:
