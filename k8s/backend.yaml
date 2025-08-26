@@ -33,7 +33,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: sicardflorent/projet-eni:backend-bbef434
+        image: sicardflorent/projet-eni:backend-b38ee50
         ports:
         - containerPort: 3000
         env:

@@ -18,7 +18,7 @@ data:
         
         # Proxy API calls to backend service (correct service name)
         location /api/ {
-            proxy_pass http://backend-service:3000;
+            proxy_pass http://backend-service.projet-eni.svc.cluster.local:3000;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -61,7 +61,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: sicardflorent/projet-eni:frontend-bbef434
+        image: sicardflorent/projet-eni:frontend-b38ee50
         ports:
         - containerPort: 80
         volumeMounts:
