@@ -1,22 +1,17 @@
-# Use the official Node.js runtime as the base image
-FROM node:18-alpine
+# Build stage
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
 
-# Set the working directory in the container
+# Production stage
+FROM node:18-alpine
 WORKDIR /app
 
-# Copy package.json only (not package-lock.json to avoid version conflicts)
+# Copy dependencies from build stage
+COPY --from=builder /app/node_modules ./node_modules
 COPY package.json ./
-
-# Install dependencies with retry and alternative registry
-RUN npm cache clean --force && \
-    npm config set registry https://registry.npmjs.org/ && \
-    npm config set fetch-retry-mintimeout 20000 && \
-    npm config set fetch-retry-maxtimeout 120000 && \
-    npm install --omit=dev --no-audit --no-fund --no-package-lock || \
-    (sleep 10 && npm install --omit=dev --no-audit --no-fund --no-package-lock)
-
-# Copy the rest of the application code
-COPY . .
+COPY src ./src
 
 # Create a non-root user to run the application
 RUN addgroup -g 1001 -S nodejs
