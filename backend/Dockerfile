@@ -4,12 +4,16 @@ FROM node:18-alpine
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json (if available)
-COPY package*.json ./
+# Copy package.json only (not package-lock.json to avoid version conflicts)
+COPY package.json ./
 
-# Install dependencies
+# Install dependencies with retry and alternative registry
 RUN npm cache clean --force && \
-    npm install --production --no-audit --no-fund
+    npm config set registry https://registry.npmjs.org/ && \
+    npm config set fetch-retry-mintimeout 20000 && \
+    npm config set fetch-retry-maxtimeout 120000 && \
+    npm install --omit=dev --no-audit --no-fund --no-package-lock || \
+    (sleep 10 && npm install --omit=dev --no-audit --no-fund --no-package-lock)
 
 # Copy the rest of the application code
 COPY . .
