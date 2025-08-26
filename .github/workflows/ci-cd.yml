@@ -74,7 +74,7 @@ jobs:
 
   deploy:
     name: Deploy to AKS
-    if: github.ref == 'refs/heads/main'  # or 'master' depending on your default branch
+    if: github.ref == 'refs/heads/main'
     needs: [ test, build-and-push ]
     runs-on: ubuntu-latest
     steps:
@@ -82,8 +82,8 @@ jobs:
         uses: azure/k8s-set-context@v4
         with:
           method: service-account
-          k8s-url: ${{ secrets.KUBERNETES_SERVER_URL }}  # Your AKS API server URL
-          k8s-secret: ${{ secrets.KUBERNETES_SECRET }}   # Base64 encoded service account token
+          k8s-url: ${{ secrets.KUBERNETES_SERVER_URL }}  
+          k8s-secret: ${{ secrets.KUBERNETES_SECRET }}   
         
       - name: Checkout source code
         uses: actions/checkout@v4
