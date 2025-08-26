@@ -81,9 +81,8 @@ jobs:
       - name: Set the Kubernetes context
         uses: azure/k8s-set-context@v4
         with:
-          method: service-account
-          k8s-url: https://todolist-aks-dev-00gv16ef.hcp.francecentral.azmk8s.io:443
-          k8s-secret: ${{ secrets.KUBERNETES_SECRET }}   
+          method: kubeconfig
+          k8s-secret: ${{ secrets.KUBE_CONFIG }}   
         
       - name: Checkout source code
         uses: actions/checkout@v4

@@ -10,7 +10,7 @@ spec:
   rules:
   - http:
       paths:
-      # Backend API routes - more specific paths first (no rewrite needed)
+      # Backend API routes
       - path: /api/docs(/.*)?
         pathType: ImplementationSpecific
         backend:
@@ -25,7 +25,7 @@ spec:
             name: backend-service
             port:
               number: 3000
-      # Frontend routes (catch-all) - must be last
+      # Frontend routes 
       - path: /(.*)
         pathType: ImplementationSpecific
         backend:
