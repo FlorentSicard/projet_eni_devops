@@ -9,7 +9,7 @@ COPY package*.json ./
 
 # Install dependencies
 RUN npm cache clean --force && \
-    npm ci --omit=dev --no-audit --no-fund
+    npm install --production --no-audit --no-fund
 
 # Copy the rest of the application code
 COPY . .
