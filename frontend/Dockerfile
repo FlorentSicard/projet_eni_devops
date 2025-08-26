@@ -25,27 +25,8 @@ FROM nginx:alpine
 # Based on Angular 15 default output path
 COPY --from=build /app/dist/frontend /usr/share/nginx/html
 
-# Create custom nginx configuration for Angular routing and API proxy
-RUN echo 'server { \
-    listen 80; \
-    server_name localhost; \
-    root /usr/share/nginx/html; \
-    index index.html; \
-    \
-    # Handle Angular routing \
-    location / { \
-        try_files $uri $uri/ /index.html; \
-    } \
-    \
-    # Proxy API calls to backend \
-    location /api/ { \
-        proxy_pass http://backend:3000; \
-        proxy_set_header Host $host; \
-        proxy_set_header X-Real-IP $remote_addr; \
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; \
-        proxy_set_header X-Forwarded-Proto $scheme; \
-    } \
-}' > /etc/nginx/conf.d/default.conf
+# Copy custom nginx configuration
+COPY nginx-proxy.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80
 EXPOSE 80

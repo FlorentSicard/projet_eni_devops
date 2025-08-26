@@ -9,11 +9,11 @@ resource "azurerm_kubernetes_cluster" "main" {
   # Default node pool
   default_node_pool {
     name                = "default"
-    node_count          = var.node_count
     vm_size             = var.node_vm_size
     min_count           = 1
     max_count           = 5
     os_disk_size_gb     = 30
+    enable_auto_scaling = true
     
     # Add required tags to node pool
     tags = local.common_tags
