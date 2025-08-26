@@ -3,6 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
+import { MaterialTestingModule } from '../../testing/material-testing.module';
 import { TaskFormComponent } from './task-form.component';
 import { TaskService } from '../../services/task.service';
 
@@ -25,7 +26,10 @@ describe('TaskFormComponent', () => {
     };
 
     TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule],
+      imports: [
+        ReactiveFormsModule,
+        MaterialTestingModule
+      ],
       declarations: [TaskFormComponent],
       providers: [
         { provide: TaskService, useValue: mockTaskService },

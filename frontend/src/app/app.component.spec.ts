@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
+import { MaterialTestingModule } from './testing/material-testing.module';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
@@ -9,8 +8,7 @@ describe('AppComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
-        MatToolbarModule,
-        MatButtonModule
+        MaterialTestingModule
       ],
       declarations: [
         AppComponent
