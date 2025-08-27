@@ -47,7 +47,7 @@ jobs:
     needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     outputs:
-      sha_shorts: ${{ steps.vars.outputs.sha_short }}
+      sha_short: ${{ steps.vars.outputs.sha_short }}
 
     steps:
     - uses: actions/checkout@v4
@@ -107,5 +107,5 @@ jobs:
       - name: Check deployment status
         run: |
           kubectl get pods -n projet-eni
-          kubectl rollout status deployment/backend-deployment -n projet-eni --timeout=300s
-          kubectl rollout status deployment/frontend-deployment -n projet-eni --timeout=300s     
+          kubectl rollout status deployment/backend-deployment -n projet-eni --timeout=120s
+          kubectl rollout status deployment/frontend-deployment -n projet-eni --timeout=120s     
