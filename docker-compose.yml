@@ -1,0 +1,64 @@
+# The conf of nginx for the frontend need to be modify. Now it's configure for a Kubernetes usage. 
+# The docker-compose file will not works with the dockerfile without modifications.
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: todolist_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: todolist_db
+      MYSQL_USER: todouser
+      MYSQL_PASSWORD: todopassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./projet_eni_devops/backend/scriptSQL.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - todolist-network
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: todolist_backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=mysql
+      - DB_USER=todouser
+      - DB_PASSWORD=todopassword
+      - DB_NAME=todolist_db
+      - DB_DIALECT=mysql
+      - PORT=3000
+    depends_on:
+      - mysql
+    networks:
+      - todolist-network
+    restart: unless-stopped
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: todolist_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - todolist-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  todolist-network:
+    driver: bridge

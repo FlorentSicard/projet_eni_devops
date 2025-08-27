@@ -1,368 +1,334 @@
-# 📝 ToDoList - DevOps Project
+# 📝 TodoList - Application de Gestion de Tâches Moderne
 
-A full-stack task management application built with Angular, Node.js, and MySQL, deployed on Azure Kubernetes Service (AKS) using modern DevOps practices.
+Une application de gestion de tâches simple et élégante construite avec des technologies web modernes et déployée en utilisant les meilleures pratiques DevOps. Ce projet démontre une application full-stack complète avec un pipeline CI/CD automatisé et un déploiement cloud.
 
-## 🏗️ Architecture Overview
+## 🎯 Qu'est-ce que cette application ?
+
+Il s'agit d'une **application TodoList** qui permet aux utilisateurs de gérer efficacement leurs tâches quotidiennes. Les utilisateurs peuvent :
+
+- ✅ **Créer de nouvelles tâches** avec un titre et une description
+- 📝 **Modifier les tâches existantes** pour mettre à jour les informations
+- 🔄 **Changer le statut des tâches** entre "À faire", "En cours" et "Terminé"
+- 🗑️ **Supprimer les tâches** quand elles ne sont plus nécessaires
+- 📱 **Accéder depuis n'importe quel appareil** grâce au design responsive
+
+## 🏗️ Comment ça fonctionne
+
+L'application suit une **architecture 3-tiers moderne** :
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Frontend      │    │    Backend      │    │    Database     │
+│   Frontend      │    │    Backend      │    │  Base de données│
 │   (Angular 15)  │◄──►│   (Node.js)     │◄──►│    (MySQL 8)    │
-│   Port: 80      │    │   Port: 3000    │    │   Port: 3306    │
+│ Interface Utilisateur│ │    API REST     │    │ Stockage données│
 └─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │
-         └───────────────────────┼───────────────────────┘
-                                 │
-                    ┌─────────────────┐
-                    │  Kubernetes     │
-                    │  (AKS Cluster)  │
-                    └─────────────────┘
 ```
-
-## 🚀 Features
 
 ### Frontend (Angular 15)
-- **Modern UI**: Built with Angular Material Design
-- **Task Management**: Create, read, update, delete tasks
-- **Status Tracking**: Tasks with different statuses (à faire, en cours, terminé)
-- **Responsive Design**: Works on desktop and mobile devices
-- **Real-time Updates**: Dynamic task list updates
+- **Interface web moderne** construite avec Angular et Material Design
+- **Design responsive** qui fonctionne sur ordinateur, tablette et mobile
+- **Mises à jour en temps réel** quand les tâches sont modifiées
+- **Expérience utilisateur intuitive** avec drag-and-drop et animations fluides
 
 ### Backend (Node.js + Express)
-- **RESTful API**: Complete CRUD operations for tasks
-- **Database Integration**: Sequelize ORM with MySQL
-- **API Documentation**: Swagger UI integration
-- **CORS Support**: Cross-origin resource sharing enabled
-- **Environment Configuration**: Flexible configuration management
+- **API RESTful** qui gère toutes les opérations sur les tâches (CRUD)
+- **Intégration base de données** utilisant l'ORM Sequelize
+- **Documentation API** avec Swagger UI pour les développeurs
+- **Configuration d'environnement** pour différents scénarios de déploiement
 
-### Database (MySQL 8)
-- **Persistent Storage**: Task data persistence
-- **Relational Structure**: Normalized database schema
-- **Connection Pooling**: Optimized database connections
+### Base de données (MySQL 8)
+- **Stockage persistant** pour toutes les données de tâches
+- **Base de données relationnelle** avec requêtes optimisées
+- **Intégrité des données** avec contraintes et relations appropriées
 
-## 📁 Project Structure
+## 🚀 Guide de Démarrage Rapide
 
-```
-projet_eni_devops/
-├── 📂 frontend/                 # Angular application
-│   ├── 📂 src/
-│   │   ├── 📂 app/
-│   │   │   ├── 📂 components/   # Angular components
-│   │   │   ├── 📂 models/       # TypeScript models
-│   │   │   ├── 📂 services/     # HTTP services
-│   │   │   └── 📂 testing/      # Test utilities
-│   │   └── 📄 index.html
-│   ├── 📄 Dockerfile           # Frontend container
-│   └── 📄 package.json
-│
-├── 📂 backend/                  # Node.js API
-│   ├── 📂 src/
-│   │   ├── 📂 config/          # Database configuration
-│   │   ├── 📂 controllers/     # Route controllers
-│   │   ├── 📂 models/          # Sequelize models
-│   │   ├── 📂 routes/          # API routes
-│   │   ├── 📂 services/        # Business logic
-│   │   └── 📂 docs/            # API documentation
-│   ├── 📂 tests/               # Unit & integration tests
-│   ├── 📄 Dockerfile           # Backend container
-│   └── 📄 package.json
-│
-├── 📂 k8s/                     # Kubernetes manifests
-│   ├── 📄 mysql-secret.yaml    # Database credentials
-│   ├── 📄 mysql-pv.yaml        # Persistent volume
-│   ├── 📄 mysql.yaml           # MySQL deployment
-│   ├── 📄 backend.yaml         # Backend deployment
-│   ├── 📄 frontend.yaml        # Frontend deployment
-│   └── 📄 loadbalancer.yaml    # Load balancer
-│
-├── 📂 iac/                     # Infrastructure as Code
-│   ├── 📄 aks.tf              # AKS cluster definition
-│   ├── 📄 variables.tf        # Terraform variables
-│   └── 📄 provider.tf         # Azure provider
-│
-├── 📂 .github/workflows/       # CI/CD pipelines
-│   └── 📄 ci-cd.yml           # GitHub Actions
-│
-└── 📄 README.md               # This file
-```
+### Option 1 : Essayer en ligne (Le plus facile)
+Si l'application est déployée, visitez simplement l'URL fournie par votre instructeur ou vérifiez le statut de déploiement dans GitHub Actions.
 
-## 🛠️ Technology Stack
+### Option 2 : Configuration de Développement
 
-### Frontend
-- **Framework**: Angular 15
-- **UI Library**: Angular Material
-- **Language**: TypeScript
-- **Build Tool**: Angular CLI
-- **Testing**: Jasmine + Karma
+Si vous voulez modifier le code :
 
-### Backend
-- **Runtime**: Node.js 18
-- **Framework**: Express.js
-- **ORM**: Sequelize
-- **Language**: JavaScript
-- **Testing**: Jest + Supertest
-- **Documentation**: Swagger UI
+1. **Prérequis** : 
+   - [Node.js 18+](https://nodejs.org/)
+   - [MySQL 8](https://dev.mysql.com/downloads/mysql/) ou Docker
 
-### Database
-- **Engine**: MySQL 8.0
-- **Storage**: Persistent volumes on Azure Disk
-
-### Infrastructure
-- **Container Platform**: Docker
-- **Orchestration**: Kubernetes (AKS)
-- **Cloud Provider**: Microsoft Azure
-- **IaC**: Terraform
-- **CI/CD**: GitHub Actions
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js 18+
-- Docker & Docker Compose
-- kubectl configured for AKS
-- Azure CLI
-- Terraform
-
-### Local Development
-
-#### 1. Clone the Repository
-```bash
-git clone <repository-url>
-cd projet_eni_devops
-```
-
-#### 2. Backend Setup
+2. **Configuration Backend** :
 ```bash
 cd backend
 npm install
-cp .env.example .env  # Configure your database
-npm run dev           # Start development server
-npm test             # Run tests
+cp .env.example .env  # Configurer votre connexion base de données
+npm run dev           # Démarre sur http://localhost:3000
 ```
 
-#### 3. Frontend Setup
+3. **Configuration Frontend** :
 ```bash
 cd frontend
 npm install
-ng serve             # Start development server
-ng test              # Run tests
+ng serve              # Démarre sur http://localhost:4200
 ```
 
-#### 4. Database Setup
+4. **Configuration Base de données** :
 ```bash
-# Using Docker
-docker run --name mysql-dev \
+# Utiliser Docker (le plus facile)
+docker run --name mysql-todolist \
   -e MYSQL_ROOT_PASSWORD=rootpassword \
   -e MYSQL_DATABASE=todolist \
   -p 3306:3306 \
   -d mysql:8.0
 ```
 
-### 🐳 Docker Deployment
+## 📱 Comment Utiliser l'Application
 
-#### Build Images
-```bash
-# Backend
-cd backend
-docker build -t todolist-backend .
+### Créer une Tâche
+1. Cliquer sur le bouton **"Ajouter une tâche"**
+2. Saisir un **nom de tâche** (obligatoire)
+3. Ajouter une **description** (optionnel)
+4. Cliquer sur **"Enregistrer"** pour créer la tâche
 
-# Frontend  
-cd frontend
-docker build -t todolist-frontend .
+### Gérer les Tâches
+- **Voir toutes les tâches** : Les tâches sont affichées dans un format de liste claire
+- **Changer le statut** : Cliquer sur le menu déroulant de statut pour déplacer les tâches entre :
+  - 🔵 **À faire** - Nouvelles tâches
+  - 🟡 **En cours** - Tâches sur lesquelles vous travaillez
+  - 🟢 **Terminé** - Tâches finies
+- **Modifier une tâche** : Cliquer sur l'icône d'édition pour modifier les détails
+- **Supprimer une tâche** : Cliquer sur l'icône de suppression pour retirer définitivement une tâche
+
+### Filtrage et Organisation
+- Les tâches sont automatiquement organisées par statut
+- Utiliser la fonctionnalité de recherche pour trouver des tâches spécifiques
+- Trier les tâches par date de création ou priorité
+
+## 🛠️ Stack Technologique
+
+| Composant | Technologie | Objectif |
+|-----------|-------------|----------|
+| **Frontend** | Angular 15 + Material UI | Interface et expérience utilisateur |
+| **Backend** | Node.js + Express | API REST et logique métier |
+| **Base de données** | MySQL 8 | Persistance et stockage des données |
+| **Conteneurisation** | Docker | Packaging d'application |
+| **Orchestration** | Kubernetes (AKS) | Gestion et mise à l'échelle des conteneurs |
+| **Plateforme Cloud** | Microsoft Azure | Hébergement et infrastructure |
+| **CI/CD** | GitHub Actions | Tests et déploiement automatisés |
+| **Infrastructure** | Terraform | Infrastructure as Code |
+
+## 🔄 Pipeline DevOps
+
+Ce projet démontre les pratiques DevOps modernes avec CI/CD automatisé :
+
+### Intégration Continue (CI)
+1. **Push de code** → Déclenche le pipeline automatisé
+2. **Tests** → Exécute les tests unitaires pour frontend et backend
+3. **Construction** → Crée les images Docker
+4. **Publication** → Pousse les images vers Docker Hub
+
+### Déploiement Continu (CD)
+1. **Déploiement** → Déploie automatiquement sur le cluster Kubernetes
+2. **Vérification** → Vérifie la santé du déploiement
+3. **Surveillance** → Suit les performances de l'application
+
+### Statut du Pipeline
+Vérifiez l'onglet **Actions** dans GitHub pour voir le statut actuel du pipeline et l'historique des déploiements.
+
+## 📁 Structure du Projet
+
 ```
-
-#### Run with Docker Compose
-```bash
-docker-compose up -d
-```
-
-## ☁️ Cloud Deployment
-
-### 1. Infrastructure Setup
-```bash
-cd iac
-terraform init
-terraform plan
-terraform apply
-```
-
-### 2. Configure kubectl
-```bash
-az aks get-credentials --resource-group <rg-name> --name <cluster-name>
-```
-
-### 3. Deploy to Kubernetes
-```bash
-cd k8s
-
-# Deploy in order
-kubectl apply -f mysql-secret.yaml
-kubectl apply -f mysql-pv.yaml
-kubectl apply -f mysql.yaml
-kubectl apply -f backend.yaml
-kubectl apply -f frontend.yaml
-kubectl apply -f loadbalancer.yaml
-```
-
-### 4. Access the Application
-```bash
-# Method 1: Port forwarding (Development)
-kubectl port-forward service/backend-service 3000:3000 -n backend &
-kubectl port-forward service/frontend-service 80:80 -n frontend &
-# Access: http://localhost:80
-
-# Method 2: LoadBalancer (Production)
-kubectl get service todolist-loadbalancer -n frontend
-# Use the external IP provided
+projet_eni_devops/
+├── 📂 frontend/                 # Application Angular
+│   ├── 📂 src/app/components/   # Composants UI (liste tâches, formulaires, etc.)
+│   ├── 📂 src/app/services/     # Services HTTP pour appels API
+│   └── 📄 Dockerfile           # Configuration conteneur frontend
+│
+├── 📂 backend/                  # API REST Node.js
+│   ├── 📂 src/controllers/     # Gestionnaires d'endpoints API
+│   ├── 📂 src/models/          # Modèles base de données (modèle Task)
+│   ├── 📂 src/routes/          # Routes API (/api/tasks)
+│   └── 📄 Dockerfile           # Configuration conteneur backend
+│
+├── 📂 k8s/                     # Fichiers de déploiement Kubernetes
+│   ├── 📄 mysql.yaml          # Déploiement base de données
+│   ├── 📄 backend.yaml         # Déploiement API backend
+│   ├── 📄 frontend.yaml        # Déploiement frontend
+│   └── 📄 loadbalancer.yaml    # Configuration accès externe
+│
+├── 📂 .github/workflows/       # Pipeline CI/CD
+│   └── 📄 ci-cd.yml           # Tests et déploiement automatisés
+│
+└── 📄 README.md               # Cette documentation
 ```
 
 ## 🔧 Configuration
 
-### Environment Variables
+### Variables d'Environnement
+L'application utilise des variables d'environnement pour la configuration :
 
-#### Backend (.env)
 ```env
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=your_password
-DB_NAME=todolist_db
-DB_DIALECT=mysql
-PORT=3000
+# Configuration Backend
+DB_HOST=mysql                    # Hôte base de données
+DB_PORT=3306                     # Port base de données
+DB_NAME=todolist                 # Nom base de données
+DB_USER=todouser                 # Utilisateur base de données
+DB_PASSWORD=todopass             # Mot de passe base de données
+PORT=3000                        # Port serveur backend
 ```
 
-#### Kubernetes Secrets
-Database credentials are stored in Kubernetes secrets:
-- Root password: `rootpassword`
-- Database: `todolist`
-- User: `todouser`
-- Password: `todopass`
+### Schéma Base de Données
+L'application utilise un schéma de base de données simple :
 
-## 🧪 Testing
-
-### Backend Tests
-```bash
-cd backend
-npm test                    # Run all tests
-npm run test:unit          # Unit tests only
-npm run test:integration   # Integration tests only
-```
-
-### Frontend Tests
-```bash
-cd frontend
-ng test                    # Run tests in watch mode
-ng test --watch=false      # Run tests once
-ng test --code-coverage    # Generate coverage report
-```
-
-## 🚀 CI/CD Pipeline
-
-The project uses GitHub Actions for continuous integration and deployment:
-
-### Pipeline Stages
-1. **Test**: Run unit tests for both frontend and backend
-2. **Build**: Create Docker images
-3. **Push**: Push images to Docker Hub
-4. **Deploy**: Deploy to AKS (manual trigger)
-
-### Workflow File
-`.github/workflows/ci-cd.yml` contains the complete pipeline configuration.
-
-## 📊 API Documentation
-
-The backend API is documented using Swagger UI:
-- **Local**: http://localhost:3000/api/docs
-- **Production**: Access via your deployed backend URL + `/api/docs`
-
-### API Endpoints
-- `GET /api/tasks` - Get all tasks
-- `GET /api/tasks/:id` - Get task by ID
-- `POST /api/tasks` - Create new task
-- `PUT /api/tasks/:id` - Update task
-- `DELETE /api/tasks/:id` - Delete task
-
-## 🗄️ Database Schema
-
-### Tasks Table
 ```sql
 CREATE TABLE tasks (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  nom VARCHAR(255) NOT NULL,
-  description TEXT,
+  nom VARCHAR(255) NOT NULL,           -- Nom de la tâche
+  description TEXT,                    -- Description de la tâche
   statut ENUM('à faire', 'en cours', 'terminé') DEFAULT 'à faire',
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 ```
 
-## 🔍 Monitoring & Troubleshooting
+## 🧪 Tests
 
-### Check Application Status
+Le projet inclut des tests complets :
+
+### Exécuter les Tests
 ```bash
-# Check all pods
-kubectl get pods -A
+# Tests backend
+cd backend && npm test
 
-# Check services
-kubectl get services -A
-
-# Check logs
-kubectl logs -l app=backend -n backend
-kubectl logs -l app=frontend -n frontend
-kubectl logs -l app=mysql -n mysql
+# Tests frontend  
+cd frontend && ng test --watch=false
 ```
 
-### Common Issues
+### Couverture de Tests
+- **Tests unitaires** pour composants et fonctions individuels
+- **Tests d'intégration** pour endpoints API
+- **Tests end-to-end** pour workflows utilisateur
 
-#### Backend Connection Issues
+## 🚀 Déploiement
+
+### Déploiement Cloud (Azure Kubernetes Service)
+L'application est automatiquement déployée sur Azure AKS via GitHub Actions :
+
+1. **Push du code** vers la branche main
+2. **Le pipeline s'exécute** automatiquement
+3. **Les tests s'exécutent** pour assurer la qualité du code
+4. **Les images Docker** sont construites et poussées
+5. **Le déploiement Kubernetes** met à jour l'application en cours d'exécution
+
+### Déploiement Manuel
+Pour un déploiement manuel ou dépannage :
+
 ```bash
-# Check if MySQL is accessible
-kubectl exec -it deployment/backend-deployment -n backend -- nslookup mysql.mysql.svc.cluster.local
+# Déployer sur Kubernetes
+kubectl apply -f k8s/
+
+# Vérifier le statut du déploiement
+kubectl get pods -n projet-eni
+kubectl get services -n projet-eni
 ```
 
-#### Frontend Not Loading
+### 🌐 Accéder à l'Application Déployée
+
+Une fois l'application déployée sur AKS, l'ingress controller crée automatiquement une **adresse IP statique publique** pour accéder à votre application.
+
+#### Obtenir l'IP Publique
 ```bash
-# Check nginx configuration
-kubectl describe configmap frontend-nginx-config -n frontend
+# Récupérer l'IP externe du LoadBalancer
+kubectl get service -n projet-eni
+
+# Ou spécifiquement pour le service LoadBalancer
+kubectl get service todolist-loadbalancer -n projet-eni -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+
+# Afficher toutes les informations du service
+kubectl describe service todolist-loadbalancer -n projet-eni
 ```
 
-## 🔒 Security Considerations
+#### Accéder à l'Application
+Une fois que vous avez récupéré l'IP publique (par exemple `20.123.45.67`), vous pouvez accéder à :
 
-- Database credentials stored in Kubernetes secrets
-- CORS properly configured for cross-origin requests
-- Resource limits set for all containers
-- Network policies can be added for additional security
-- HTTPS termination at load balancer level
+- **Application Frontend** : `http://[IP-PUBLIQUE]`
+- **API Backend** : `http://[IP-PUBLIQUE]:3000`
+- **Documentation API** : `http://[IP-PUBLIQUE]:3000/api/docs`
 
-## 📈 Performance Optimization
+**Exemple** :
+```bash
+# Si votre IP publique est 20.123.45.67
+# Frontend : http://20.123.45.67
+# Backend API : http://20.123.45.67:3000
+# Documentation : http://20.123.45.67:3000/api/docs
+```
 
-- **Frontend**: Angular build optimization, lazy loading
-- **Backend**: Connection pooling, caching strategies
-- **Database**: Indexed queries, optimized schema
-- **Infrastructure**: Horizontal pod autoscaling, resource limits
+#### Vérifier que l'Application Fonctionne
+```bash
+# Tester l'API
+curl http://[IP-PUBLIQUE]:3000/api/tasks
 
-## 🤝 Contributing
+# Vérifier le statut de santé
+curl http://[IP-PUBLIQUE]:3000/health
+```
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+> **Note** : Il peut falloir quelques minutes après le déploiement pour que l'IP publique soit assignée et que l'application soit accessible.
 
-## 📝 License
+## 🔍 Surveillance et Dépannage
 
-This project is licensed under the ISC License - see the LICENSE file for details.
+### Vérifier la Santé de l'Application
+```bash
+# Voir les pods en cours d'exécution
+kubectl get pods -n projet-eni
 
-## 👥 Authors
+# Vérifier les logs d'application
+kubectl logs -l app=backend -n projet-eni
+kubectl logs -l app=frontend -n projet-eni
 
-- **Florent Sicard** - Initial work
+# Tester la connectivité API
+curl http://<url-de-votre-app>/api/tasks
+```
 
-## 🙏 Acknowledgments
+### Problèmes Courants
+- **Connexion base de données** : S'assurer que le pod MySQL fonctionne et est accessible
+- **Erreurs de pull d'image** : Vérifier les identifiants Docker Hub et tags d'image
+- **Problèmes réseau** : Vérifier les configurations de service et règles d'ingress
 
-- Angular team for the excellent framework
-- Express.js community for the robust backend framework
-- Kubernetes community for container orchestration
-- Azure team for cloud infrastructure
+## 🤝 Contribuer
+
+Vous voulez améliorer l'application ? Voici comment :
+
+1. **Forker** le repository
+2. **Créer** une branche de fonctionnalité (`git checkout -b feature/nouvelle-fonctionnalite`)
+3. **Faire** vos changements et ajouter des tests
+4. **Commiter** vos changements (`git commit -m 'Ajouter nouvelle fonctionnalité'`)
+5. **Pousser** vers votre branche (`git push origin feature/nouvelle-fonctionnalite`)
+6. **Créer** une Pull Request
+
+## 📚 Objectifs d'Apprentissage
+
+Ce projet démontre :
+
+- **Développement full-stack** avec frameworks modernes
+- **Conception et implémentation d'API RESTful**
+- **Conception de base de données** et utilisation d'ORM
+- **Conteneurisation** avec Docker
+- **Orchestration et déploiement Kubernetes**
+- **Pipelines CI/CD** avec GitHub Actions
+- **Déploiement cloud** sur Azure
+- **Infrastructure as Code** avec Terraform
+- **Meilleures pratiques DevOps** et automatisation
+
+## 📞 Support
+
+Si vous rencontrez des problèmes :
+
+1. Vérifiez l'onglet **GitHub Actions** pour le statut du pipeline
+2. Consultez les **logs** dans les pods Kubernetes
+3. Consultez la **documentation API** à `/api/docs`
+4. Ouvrez une **issue** dans le repository GitHub
+
+## 👥 Auteurs
+
+- **Florent Sicard** - Étudiant ENI - Projet DevOps 2024
 
 ---
 
-**🎉 Happy coding! If you have any questions or issues, please open an issue in the repository.**
+**🎉 Profitez de la gestion de vos tâches avec cette application TodoList moderne !**
