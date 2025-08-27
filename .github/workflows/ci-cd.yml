@@ -78,34 +78,34 @@ jobs:
     needs: [ test, build-and-push ]
     runs-on: ubuntu-latest
     steps:
-      - name: Set the Kubernetes context
-        uses: azure/k8s-set-context@v4
-        with:
-          method: kubeconfig
-          kubeconfig: ${{ secrets.KUBE_CONFIG }}   
-        
       - name: Checkout source code
         uses: actions/checkout@v4
         
-      - name: Deploy Backend to AKS
-        uses: azure/k8s-deploy@v5
-        with:
-          namespace: projet-eni
-          manifests: |
-            k8s/backend.yaml
-          images: |
-            sicardflorent/projet-eni:backend-${{ needs.build-and-push.outputs.sha_short }}
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
         
-      - name: Deploy Frontend to AKS
-        uses: azure/k8s-deploy@v5
-        with:
-          namespace: projet-eni
-          manifests: |
-            k8s/frontend.yaml
-          images: |
-            sicardflorent/projet-eni:frontend-${{ github.sha }}
-        
-      - name: Verify deployment
+      - name: Set kubeconfig
         run: |
-          kubectl rollout status deployment/backend-deployment -n projet-eni
-          kubectl rollout status deployment/frontend-deployment -n projet-eni     
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
+        
+      - name: Update backend image
+        run: |
+          sed -i 's|image: sicardflorent/projet-eni:backend-.*|image: sicardflorent/projet-eni:backend-${{ needs.build-and-push.outputs.sha_short }}|' k8s/backend.yaml
+        
+      - name: Update frontend image  
+        run: |
+          sed -i 's|image: sicardflorent/projet-eni:frontend-.*|image: sicardflorent/projet-eni:frontend-${{ needs.build-and-push.outputs.sha_short }}|' k8s/frontend.yaml
+        
+      - name: Deploy backend
+        run: kubectl apply -f k8s/backend.yaml
+        
+      - name: Deploy frontend
+        run: kubectl apply -f k8s/frontend.yaml
+        
+      - name: Check deployment status
+        run: |
+          kubectl get pods -n projet-eni
+          kubectl rollout status deployment/backend-deployment -n projet-eni --timeout=300s
+          kubectl rollout status deployment/frontend-deployment -n projet-eni --timeout=300s     
