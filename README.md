@@ -271,7 +271,50 @@ curl http://[IP-PUBLIQUE]:3000/health
 
 > **Note** : Il peut falloir quelques minutes après le déploiement pour que l'IP publique soit assignée et que l'application soit accessible.
 
-## 🔍 Surveillance et Dépannage
+## 📊 Surveillance et Monitoring
+
+### Installation de Prometheus et Grafana
+
+Le cluster est équipé d'une stack de monitoring complète utilisant **Prometheus** et **Grafana** installés via Helm :
+
+```bash
+# Installation de kube-prometheus-stack
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
+```
+
+### Accéder à Grafana
+
+1. **Récupérer le mot de passe admin** :
+```bash
+kubectl --namespace monitoring get secrets kube-prometheus-stack-grafana -o jsonpath="{.data.admin-password}" | base64 -d ; echo
+```
+
+2. **Port-forward vers Grafana** :
+```bash
+export POD_NAME=$(kubectl --namespace monitoring get pod -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=kube-prometheus-stack" -oname)
+kubectl --namespace monitoring port-forward $POD_NAME 3000
+```
+
+3. **Accéder à l'interface** :
+   - URL : `http://localhost:3000`
+   - Utilisateur : `admin`
+   - Mot de passe : (obtenu avec la commande ci-dessus)
+
+### Dashboards Disponibles
+
+Grafana est livré avec de **nombreux dashboards pré-configurés** pour surveiller :
+- **Métriques du cluster Kubernetes** (CPU, mémoire, réseau)
+- **Performances des pods** et conteneurs
+- **État des nodes** et ressources
+- **Métriques de l'application TodoList** (si instrumentée)
+- **Santé de la base de données MySQL**
+- **Trafic réseau** et latence
+
+Ces dashboards offrent une **visibilité complète** sur l'infrastructure et les performances de l'application en temps réel.
+
+## 🔍 Dépannage
 
 ### Vérifier la Santé de l'Application
 ```bash
